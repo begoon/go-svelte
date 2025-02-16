@@ -1,0 +1,16 @@
+FROM golang:1.23 as build
+
+WORKDIR /
+
+COPY go.* /
+
+COPY main.go /
+COPY dist/ /dist/
+
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /exe ./.
+
+FROM scratch
+
+COPY --from=build /exe /
+
+ENTRYPOINT ["/exe"]
