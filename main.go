@@ -44,6 +44,7 @@ func main() {
 	http.HandleFunc("GET /{$}", route("/", IndexData))
 	http.HandleFunc("GET /about/{id...}", route("/about", AboutData))
 	http.HandleFunc("GET /health", healthHandler(version, tag))
+	http.HandleFunc("GET /ip", ipHandler)
 
 	dev := os.Getenv("DEV") != ""
 	if dev {
@@ -128,6 +129,30 @@ func healthHandler(version, tag string) http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+	}
+}
+
+type IP struct {
+	IP string `json:"ip"`
+}
+
+func ipHandler(w http.ResponseWriter, r *http.Request) {
+	url := "https://api.myip.com"
+	resp, err := http.Get(url)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer r.Body.Close()
+	var ip IP
+	err = json.NewDecoder(resp.Body).Decode(&ip)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	_, err = w.Write([]byte(ip.IP))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 

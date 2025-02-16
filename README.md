@@ -1,6 +1,24 @@
 # Go + Svelte
 
+## Intro
+
 This project uses Svelte (not SvelteKit) and Go to build a single executable web application with modern dynamic web pages powered by Svelte.
+
+### Note - what this project is and what isn't?
+
+This **is a demo project** which can be used as a skeleton for other projects.
+
+This project is **not a library or framework**. The best way is to clone or fork the repo and start tweaking it into your own application. The author is happy to take PRs, but those PR should improve the project demo purpose.
+
+## Why may you try the project?
+
+Go is a perfect tool to build networks and web servers. Try this project if you want to build a web server and host your web app, a self-contained single binary. The single binary can be deployed in a tiny scratch container to GCP or AWS or dropped as an executable to a VPS.
+
+You may start with HTMX if your web app does not require complex reactive behaviour. If it does, you add Alpine JS for more complicated visual effects, but still without a build step for the HTML/JS frontend.
+
+Finally, you should try Svelte if you develop an advanced reactive web application. Svelte is a fantastic framework for building web applications, but it requires the build step and routing on the server if your application has multiple independent pages. The project helps using Go and Svelte together.
+
+## What does the project do?
 
 The Go server provides routing, server-side data loading and injection if necessary. Also, the Go server can do hot reloading during development via a websocket monitor.
 
@@ -52,7 +70,3 @@ A page can be available from multiple routes, specified in multiple `http.Handle
 Each page is an indendent Svelte SPA with index.html, main.ts and the ".svelte" file like "App.svelte".
 
 The pages are configured in `vite.config.ts` in `rollupOptions`.
-
-## Note
-
-This project is not a library or framework. It is a demo project which can be used as a skeleton for other projects.
