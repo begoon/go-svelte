@@ -61,26 +61,30 @@ func main() {
 	http.ListenAndServe(":"+port, nil)
 }
 
-func IndexData(r *http.Request, data RouteData) {
-	data["prompt"] = "Como estas?"
+func IndexData(r *http.Request) interface{} {
+	return struct {
+		Prompt string `json:"prompt"`
+	}{Prompt: "Como estas?"}
 }
 
-func AboutData(r *http.Request, data RouteData) {
-	data["greeting"] = "halo!"
+func AboutData(r *http.Request) interface{} {
+	data := struct {
+		Greeting string `json:"greeting"`
+		ID       string `json:"id"`
+	}{Greeting: "halo!"}
+
 	id := r.PathValue("id")
 	if id != "" {
-		data["id"] = r.PathValue("id")
+		data.ID = r.PathValue("id")
 	}
+	return data
 }
 
-type (
-	RouteData map[string]interface{}
-	LoadFunc  func(r *http.Request, data RouteData)
-)
+type loadFunc func(r *http.Request) interface{}
 
-const HeadTag = "<head>"
+const headTag = "<head>"
 
-func route(path string, load LoadFunc) http.HandlerFunc {
+func route(path string, load loadFunc) http.HandlerFunc {
 	log.Println("register", path)
 	if path == "/" {
 		path = ""
@@ -92,30 +96,20 @@ func route(path string, load LoadFunc) http.HandlerFunc {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		i := strings.Index(string(content), HeadTag)
-		if i == -1 {
-			http.Error(w, "head tag not found", http.StatusInternalServerError)
-			return
-		}
-		data := map[string]interface{}{}
-		load(r, data)
-		dataJSON, err := json.Marshal(data)
+
+		data, err := json.Marshal(load(r))
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			msg := fmt.Sprintf("error loading page %q data: %v", path, err)
+			http.Error(w, msg, http.StatusInternalServerError)
 			return
 		}
-		content = append(
-			content[:i+len(HeadTag)],
-			append([]byte(
-				"\n"+
-					strings.Repeat(" ", 8)+
-					`<script>window.__DATA__ = `+string(dataJSON)+`;</script>`),
-				content[i+len(HeadTag):]...,
-			)...)
+
+		injection := headTag + "\n" + strings.Repeat(" ", 6) + `<script>window.__DATA__ = ` + string(data) + `;</script>`
+		strings.NewReplacer(headTag, injection).WriteString(w, string(content))
+
 		if os.Getenv("DEV") != "" {
-			content = append(content, reloader...)
+			w.Write(reloader)
 		}
-		w.Write(content)
 	}
 }
 
@@ -183,7 +177,7 @@ func wsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-const reloader = `
+var reloader = []byte(`
 <script>
 	(function () {
 		const { host } = document.location;
@@ -206,4 +200,4 @@ const reloader = `
 		monitor();
 	}());
 </script>
-`
+`)
