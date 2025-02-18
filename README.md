@@ -33,7 +33,7 @@ The Svelte code can use either `fetch()` directly or `window.__DATA__`, which is
 ## Required software
 
 - go 1.23+
-- Svelte 5+ (installed automatically  by `bun install`)
+- Svelte 5+ (installed automatically by `bun install`)
 - bun (to build and package Svelte)
 - [air](https://github.com/air-verse/air) for hot reloading
 - [just](https://just.systems) as make replacement
