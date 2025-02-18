@@ -52,8 +52,8 @@ func main() {
 		http.HandleFunc("/ws", wsHandler)
 	}
 
-	port := "8000"
-	if os.Getenv("PORT") != "" {
+	port := os.Getenv("PORT")
+	if port == "" {
 		port = os.Getenv("PORT")
 	}
 

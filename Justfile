@@ -37,6 +37,8 @@ docker-run:
     docker run --rm -it -p 8000:8000 go-svelte
 
 docker-tag-push:
+    #!/bin/bash
+    export CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE={{ CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE }}
     docker tag go-svelte:latest {{ REPO }}/{{ NAME }}:{{ TAG }}
     docker push {{ REPO }}/{{ NAME }}:{{ TAG }}
 
@@ -58,3 +60,8 @@ prerequisites:
 
 clean:
     -rm -rf tmp node_modules dist
+
+CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE := env('CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE', 'UNDEFINED')
+
+docker-login:
+    docker login -u _json_key --password-stdin {{ REPO }} <{{ CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE }}
