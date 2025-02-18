@@ -24,14 +24,16 @@ The Go server provides routing, server-side data loading and injection if necess
 
 The project is for demonstration purposes only. The app exposes a few simple pages with the Counter component in Svelte and links between pages with and without path parameters.
 
-## Important specifics
+## Page data loading
 
-The hydration is not supported. The Svelte code can use `fetch` directly or `windows.__DATA__`, which is populated by the page handler on the server.
+The hydration is not supported in a way of SvelteKit.
+
+The Svelte code can use either `fetch()` directly or `windows.__DATA__`, which is populated by the page handler on the server.
 
 ## Required software
 
 - go 1.23+
-- Svelte 5+
+- Svelte 5+ (installed automatically  by `bun install`)
 - bun (to build and package Svelte)
 - [air](https://github.com/air-verse/air) for hot reloading
 - [just](https://just.systems) as make replacement
