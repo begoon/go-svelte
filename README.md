@@ -28,7 +28,7 @@ The project is for demonstration purposes only. The app exposes a few simple pag
 
 The hydration is not supported in a way of SvelteKit.
 
-The Svelte code can use either `fetch()` directly or `windows.__DATA__`, which is populated by the page handler on the server.
+The Svelte code can use either `fetch()` directly or `window.__DATA__`, which is populated by the page handler on the server.
 
 ## Required software
 
