@@ -54,7 +54,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = os.Getenv("PORT")
+		port = "8000"
 	}
 
 	fmt.Println("listening on " + port)
